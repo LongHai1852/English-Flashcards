@@ -21,56 +21,42 @@
   </header>
 
   <main>
-    <button id="install-btn" class="btn">📲 Install App</button>
+    <button id="install-btn" class="btn" style="background-color: #28a745; display: none; margin-bottom: 1rem;">📲
+      Install App</button>
 
-    <div class="card">
-      <div class="word">Vocabulary</div>
-      <p>Tap to reveal definition</p>
+    <div class="card" onclick="toggleDef()">
+      <div class="word">...</div>
+      <p style="font-size: 0.9rem; color: #999;">Tap to flip</p>
       <div class="definition" id="def-area" style="display:none;">
-        Welcome to your new PWA Learning App!
+        ...
       </div>
     </div>
 
-    <button class="btn" onclick="toggleDef()">Reveal</button>
+    <div class="controls">
+      <button class="btn-outline" onclick="prevCard()">← Prev</button>
+      <button class="btn" onclick="nextCard()">Next →</button>
+    </div>
+
+    <!-- Floating Action Button -->
+    <button class="fab" onclick="openModal()">+</button>
+
+    <!-- Add Word Modal -->
+    <div id="add-modal" class="modal">
+      <div class="modal-content">
+        <h2>Add New Word</h2>
+        <input type="text" id="inp-word" placeholder="English Word (e.g. Apple)">
+        <input type="text" id="inp-ipa" placeholder="IPA (e.g. /ˈæp.l/)">
+        <input type="text" id="inp-def" placeholder="Meaning (e.g. Quả táo)">
+        <div class="modal-actions">
+          <button class="btn-outline" onclick="closeModal()">Cancel</button>
+          <button class="btn" onclick="addWord()">Save</button>
+        </div>
+      </div>
+    </div>
   </main>
 
-  <script>
-    // 1. Register Service Worker
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js')
-          .then(reg => console.log('SW Registered!', reg))
-          .catch(err => console.log('SW Failed!', err));
-      });
-    }
 
-    // 2. Simple Interaction Logic
-    function toggleDef() {
-      const def = document.getElementById('def-area');
-      def.style.display = def.style.display === 'none' ? 'block' : 'none';
-    }
-
-    // 3. PWA Install Prompt Logic
-    let deferredPrompt;
-    const installBtn = document.getElementById('install-btn');
-
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      deferredPrompt = e;
-      installBtn.style.display = 'block';
-    });
-
-    installBtn.addEventListener('click', () => {
-      installBtn.style.display = 'none';
-      deferredPrompt.prompt();
-      deferredPrompt.userChoice.then((choiceResult) => {
-        if (choiceResult.outcome === 'accepted') {
-          console.log('User accepted the A2HS prompt');
-        }
-        deferredPrompt = null;
-      });
-    });
-  </script>
+  <script src="app.js"></script>
 
 </body>
 
