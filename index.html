@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vocab Master</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="style.css">
+
+  <!-- iOS Support -->
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <meta name="apple-mobile-web-app-status-bar" content="#007bff">
+  <meta name="theme-color" content="#007bff">
+</head>
+
+<body>
+
+  <header>
+    <h1>Vocab Master 🎓</h1>
+  </header>
+
+  <main>
+    <button id="install-btn" class="btn">📲 Install App</button>
+
+    <div class="card">
+      <div class="word">Vocabulary</div>
+      <p>Tap to reveal definition</p>
+      <div class="definition" id="def-area" style="display:none;">
+        Welcome to your new PWA Learning App!
+      </div>
+    </div>
+
+    <button class="btn" onclick="toggleDef()">Reveal</button>
+  </main>
+
+  <script>
+    // 1. Register Service Worker
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+          .then(reg => console.log('SW Registered!', reg))
+          .catch(err => console.log('SW Failed!', err));
+      });
+    }
+
+    // 2. Simple Interaction Logic
+    function toggleDef() {
+      const def = document.getElementById('def-area');
+      def.style.display = def.style.display === 'none' ? 'block' : 'none';
+    }
+
+    // 3. PWA Install Prompt Logic
+    let deferredPrompt;
+    const installBtn = document.getElementById('install-btn');
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      installBtn.style.display = 'block';
+    });
+
+    installBtn.addEventListener('click', () => {
+      installBtn.style.display = 'none';
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then((choiceResult) => {
+        if (choiceResult.outcome === 'accepted') {
+          console.log('User accepted the A2HS prompt');
+        }
+        deferredPrompt = null;
+      });
+    });
+  </script>
+
+</body>
+
+</html>
